@@ -1,7 +1,32 @@
-import { FC, ReactNode, useMemo, useState } from "react";
+import {
+  createContext,
+  FC,
+  ReactNode,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 import useCharacterList from "./hooks/useCharacterList";
 import SearchBar from "./components/Searchbar";
 import CharacterListRendering from "./components/CharacterListRendering";
+
+type CharacterListContextType = {
+  refetchCharacters: () => void;
+};
+
+export const CharacterListContext = createContext<
+  CharacterListContextType | undefined
+>(undefined);
+
+export const useCharacterListContext = () => {
+  const context = useContext(CharacterListContext);
+  if (!context) {
+    throw new Error(
+      "useCharacterListContext must be used within a CharacterListProvider"
+    );
+  }
+  return context;
+};
 
 type LayoutProps = {
   children?: ReactNode;
@@ -9,11 +34,11 @@ type LayoutProps = {
 
 /**
  * CharacterList component
- * 
+ *
  * Renders a character list view with a sidebar including:
  * - A search bar to filter characters
  * - Two sections: starred characters and normal characters
- * 
+ *
  * Accepts optional `children` to render details or additional views.
  */
 const CharacterList: FC<LayoutProps> = ({ children }) => {
@@ -26,7 +51,11 @@ const CharacterList: FC<LayoutProps> = ({ children }) => {
   });
 
   // Fetch character list data based on filters
-  const { data, loading, error } = useCharacterList(filters);
+  const { data, loading, error, refetch } = useCharacterList(filters);
+
+  const refetchCharacters = () => {
+    refetch();
+  };
 
   // Memoized list of starred characters
   const starredCharacters = useMemo(() => {
@@ -44,34 +73,36 @@ const CharacterList: FC<LayoutProps> = ({ children }) => {
   }
 
   return (
-    <div className="w-screen flex md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 h-screen overflow-hidden">
-      {/* Sidebar section */}
-      <div className="w-screen md:w-full md:col-span-1 bg-whiteSmoke text-primary overflow-y-auto">
-        {/* Search bar */}
-        <section className="sticky top-0 left-0 bg-whiteSmoke pb-8">
-          <SearchBar onFilter={setFilters} currentFilters={filters} />
-        </section>
+    <CharacterListContext.Provider value={{ refetchCharacters }}>
+      <div className="w-screen flex md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 h-screen overflow-hidden">
+        {/* Sidebar section */}
+        <div className="w-screen md:w-full md:col-span-1 bg-whiteSmoke text-primary overflow-y-auto">
+          {/* Search bar */}
+          <section className="sticky top-0 left-0 bg-whiteSmoke pb-8">
+            <SearchBar onFilter={setFilters} currentFilters={filters} />
+          </section>
 
-        {/* Character lists */}
-        <div>
-          {!error && data ? (
-            <section>
-              <CharacterListRendering
-                title="Starred characters"
-                characters={starredCharacters}
-              />
-              <CharacterListRendering
-                title="Characters"
-                characters={normalCharacters}
-              />
-            </section>
-          ) : (
-            <div>There were a trouble while gathering the information</div>
-          )}
+          {/* Character lists */}
+          <div>
+            {!error && data ? (
+              <section>
+                <CharacterListRendering
+                  title="Starred characters"
+                  characters={starredCharacters}
+                />
+                <CharacterListRendering
+                  title="Characters"
+                  characters={normalCharacters}
+                />
+              </section>
+            ) : (
+              <div>There were a trouble while gathering the information</div>
+            )}
+          </div>
         </div>
+        {children}
       </div>
-      {children}
-    </div>
+    </CharacterListContext.Provider>
   );
 };
 

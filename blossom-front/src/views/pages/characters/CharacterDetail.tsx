@@ -6,10 +6,11 @@ import { FaArrowLeft, FaHeart, FaRegHeart } from "react-icons/fa6";
 import useStarCharacter from "./hooks/useStarCharacter";
 import { CHARACTERS_QUERY } from "./hooks/useCharacterList";
 import useDeleteCharacter from "./hooks/useDeleteCharacter";
+import { useCharacterListContext } from "./CharacterList";
 
 /**
  * CharacterDetail component
- * 
+ *
  * Displays detailed information about a specific character.
  * Includes:
  * - Character avatar and name
@@ -18,6 +19,7 @@ import useDeleteCharacter from "./hooks/useDeleteCharacter";
  * - Delete button
  */
 const CharacterDetail = () => {
+  const { refetchCharacters } = useCharacterListContext();
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -77,6 +79,7 @@ const CharacterDetail = () => {
       refetchQueries: [{ query: CHARACTERS_QUERY }],
     })
       .then(() => {
+        refetchCharacters();
         navigate("/character");
       })
       .catch((err) => {
