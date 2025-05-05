@@ -31,6 +31,10 @@ Follow these steps to set up and run the application:
 
 5. Enter to `localhost:4173`
 
+## Documentation
+
+Watch the documentation at `localhost:3000`
+
 ## Notes
 
 - Ensure no other applications are using the ports required by the application.
