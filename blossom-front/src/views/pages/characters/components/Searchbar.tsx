@@ -5,6 +5,7 @@ import { useState } from "react";
 import { HiArrowsUpDown } from "react-icons/hi2";
 
 type SearchBarProps = {
+  //eslint-disable-next-line @typescript-eslint/no-explicit-any
   onFilter: (filters: any) => void;
   currentFilters: FilterValues;
 };
