@@ -9,6 +9,7 @@ import {
 } from '../config';
 import Character from './models/characters/character.model';
 
+// Initialize Sequelize instance with connection configuration
 const sequelize = new Sequelize(
   DB_NAME || 'blossom',
   DB_USERNAME || 'postgres',
@@ -21,12 +22,14 @@ const sequelize = new Sequelize(
   },
 );
 
+// Test database connection on startup
 sequelize.authenticate();
 
+// Map database models into an accessible object
 const DB = {
-  character: Character(sequelize),
-  sequelize,
-  Sequelize
+  character: Character(sequelize),  // Character model instance
+  sequelize,                        // Sequelize instance
+  Sequelize                         // Sequelize class
 };
 
 export default DB;

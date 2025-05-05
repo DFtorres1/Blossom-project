@@ -1,5 +1,6 @@
 import { buildSchema } from 'graphql';
 
+// Build GraphQL schema using SDL syntax
 const schema = buildSchema(`
     type DeleteResult {
       result: String

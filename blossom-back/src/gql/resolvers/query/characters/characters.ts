@@ -2,9 +2,11 @@ import DB from '../../../..//database';
 import { CharacterDTO } from '../../../../gql/dto/character.dto';
 import { Op, WhereAttributeHash, Order } from 'sequelize';
 
+// Resolver to fetch multiple characters, supporting optional filters and ordering
 const characters = async (args: CharacterDTO) => {
   const where: WhereAttributeHash = {};
 
+  // Apply filters based on provided arguments
   if (args.id) where.id = args.id;
   if (args.name) where.name = { [Op.like]: `%${args.name}%` };
   if (args.status) where.status = args.status;
@@ -12,11 +14,13 @@ const characters = async (args: CharacterDTO) => {
   if (args.gender) where.gender = args.gender;
   if (args.is_starred !== undefined) where.is_starred = args.is_starred;
 
+  // Apply ordering if specified
   const order: Order = [];
   if (args.order_by) {
     order.push([args.order_by, args.order_direction || 'ASC']);
   }
 
+  // Execute the query and return the result
   const result = DB.character.findAll({
     where,
     order,

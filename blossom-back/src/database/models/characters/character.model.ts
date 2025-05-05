@@ -4,8 +4,10 @@ import BaseModel from '../base.model';
 class Character extends BaseModel {}
 
 export default function (sequelize: Sequelize): typeof Character {
+  // Initialize base attributes like id, createdAt, updatedAt, deletedAt
   Character.initBaseAttributes(sequelize);
 
+  // Define model-specific attributes and configuration
   Character.init(
     {
       status: {
