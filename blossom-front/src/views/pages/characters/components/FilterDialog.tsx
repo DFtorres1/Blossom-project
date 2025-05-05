@@ -2,6 +2,7 @@ import { useState } from "react";
 import FilterItem from "./FilterItem";
 import { FaArrowLeft } from "react-icons/fa6";
 
+// Props type for FilterDialog component
 interface FilterDialogProps {
   isOpen: boolean;
   onClose: () => void;
@@ -10,6 +11,7 @@ interface FilterDialogProps {
   currentFilters: FilterValues;
 }
 
+// FilterDialog component: modal-like dialog for selecting filter options
 const FilterDialog = ({
   isOpen,
   onClose,
@@ -18,16 +20,20 @@ const FilterDialog = ({
 }: FilterDialogProps) => {
   const [filters, setFilters] = useState(currentFilters);
 
+  // Update filter values on selection
   const handleSelect = (filterKey: string, value: string) => {
     setFilters((prev) => ({ ...prev, [filterKey]: value }));
   };
 
+  // Apply filters and close dialog
   const handleApplyFilters = () => {
     onApplyFilters(filters);
     onClose();
   };
 
+  // Hide component when closed
   if (!isOpen) return null;
+
   return (
     <div
       className="
@@ -38,10 +44,13 @@ const FilterDialog = ({
       "
     >
       <div className="space-y-6">
+        {/* Back button for mobile */}
         <FaArrowLeft
           className="block md:hidden text-primaryBlue my-6 h-8 w-8 cursor-pointer"
           onClick={onClose}
         />
+
+        {/* Character type filter */}
         <FilterItem
           title="Character"
           options={[
@@ -53,6 +62,7 @@ const FilterDialog = ({
           onSelect={(value) => handleSelect("character", value)}
         />
 
+        {/* Species filter */}
         <FilterItem
           title="Specie"
           options={[
@@ -64,6 +74,7 @@ const FilterDialog = ({
           onSelect={(value) => handleSelect("specie", value)}
         />
 
+        {/* Apply filters button */}
         <button
           className="bg-coolGray-100 rounded-lg py-2 font-semibold w-full"
           onClick={handleApplyFilters}

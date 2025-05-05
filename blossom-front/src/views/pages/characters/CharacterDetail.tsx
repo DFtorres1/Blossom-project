@@ -7,16 +7,29 @@ import useStarCharacter from "./hooks/useStarCharacter";
 import { CHARACTERS_QUERY } from "./hooks/useCharacterList";
 import useDeleteCharacter from "./hooks/useDeleteCharacter";
 
+/**
+ * CharacterDetail component
+ * 
+ * Displays detailed information about a specific character.
+ * Includes:
+ * - Character avatar and name
+ * - Description attributes
+ * - Star/unstar toggle
+ * - Delete button
+ */
 const CharacterDetail = () => {
   const navigate = useNavigate();
-
   const { id } = useParams();
+
+  // Fetch character details based on the URL param id
   const { data, loading, error } = useCharacterDetail(+(id ?? 0));
 
   const character = data?.character;
+
   const [starCharacter] = useStarCharacter();
   const [deleteCharacter] = useDeleteCharacter();
 
+  // Memoized description attributes for display
   const characterDescription = useMemo(() => {
     if (!character) return [];
 
@@ -27,10 +40,12 @@ const CharacterDetail = () => {
     ];
   }, [character]);
 
+  // Navigation handler: back to list
   const handleNavToHome = () => {
     navigate("/character");
   };
 
+  // Star/unstar character and update cache manually
   const handleStarCharacter = () => {
     starCharacter({
       variables: { id: character.id, is_starred: !character.is_starred },
@@ -55,6 +70,7 @@ const CharacterDetail = () => {
     });
   };
 
+  // Delete character and navigate back on success
   const handleDeleteCharacter = () => {
     deleteCharacter({
       variables: { id: character.id },
@@ -68,6 +84,7 @@ const CharacterDetail = () => {
       });
   };
 
+  // Loading state UI
   if (loading) {
     return <div>Loading</div>;
   }
@@ -84,10 +101,13 @@ const CharacterDetail = () => {
         <div>
           {!error && character ? (
             <div className="flex flex-col">
+              {/* Back button for mobile */}
               <FaArrowLeft
                 className="block md:hidden text-primaryBlue my-6 h-8 w-8 cursor-pointer"
                 onClick={handleNavToHome}
               />
+
+              {/* Avatar and name */}
               <section className="pb-4 flex flex-col">
                 <div className="relative w-20 h-20">
                   <img
@@ -108,6 +128,8 @@ const CharacterDetail = () => {
                 </div>
                 <span className="text-2xl font-bold">{character.name}</span>
               </section>
+
+              {/* Description attributes */}
               <section className="flex flex-col">
                 {characterDescription?.map((desc, idx) => (
                   <div key={desc.title}>
@@ -121,6 +143,8 @@ const CharacterDetail = () => {
                   </div>
                 ))}
               </section>
+
+              {/* Delete character button */}
               <section>
                 <button
                   className="bg-coolGray-100 rounded-lg py-2 font-semibold w-20"

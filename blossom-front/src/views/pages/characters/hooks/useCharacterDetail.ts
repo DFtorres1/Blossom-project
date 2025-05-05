@@ -1,5 +1,6 @@
 import { gql, useQuery } from "@apollo/client";
 
+// GraphQL query to fetch a character's detail by its ID
 export const CHARACTER_QUERY = gql`
   query Character($id: ID!) {
     character(id: $id) {
@@ -15,6 +16,8 @@ export const CHARACTER_QUERY = gql`
     }
   }
 `;
+
+// Custom hook to execute the character detail query
 const useCharacterDetail = (id: number) => {
   return useQuery(CHARACTER_QUERY, {
     variables: { id },
