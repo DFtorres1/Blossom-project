@@ -1,0 +1,67 @@
+# version: '3.9'
+
+services:
+  db:
+    image: postgres:16
+    container_name: blossom_db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: blossom
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d blossom"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  backend:
+    build:
+      context: ./blossom-back
+      dockerfile: Dockerfile
+    container_name: backend
+    ports:
+      - "3000:3000"
+    expose:
+      - 3000
+    environment:
+      PORT: 3000
+      NODE_ENV: production
+      BASE_URL: localhost
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: blossom
+      DB_USERNAME: postgres
+      DB_PASSWORD: 1234
+      DB_DIALECT: postgres
+      FRONTEND_URL: http://localhost:4173
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./blossom-front
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "4173:4173"
+    expose:
+      - 4173
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+volumes:
+  db-data:
+
+networks:
+  app-network:
