@@ -1,5 +1,3 @@
 components:
   schemas:
-    getAll:
-      
-    getOne:
+    graphql: 
