@@ -33,7 +33,8 @@ Follow these steps to set up and run the application:
 
 ## Documentation
 
-Watch the documentation at `localhost:3000`
+Watch the GraphQL documentation at `localhost:3000`
+Watch the Swagger documentation at `localhost:3000/api-docs/`
 
 ## Notes
 
